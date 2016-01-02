@@ -1,10 +1,10 @@
 import path from 'path';
 import express from 'express';
-import favicon from 'express-favicon';
 import compress from 'compression';
 import colors from 'colors';
 
 import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 import DocMeta from 'react-doc-meta';
 
 import Iso from 'iso';
@@ -57,7 +57,7 @@ app.get('/', (req, res) => {
 
   iso = new Iso();
 
-  app = React.renderToString(React.createElement(Application));
+  app = ReactDOMServer.renderToString(React.createElement(Application));
   iso.add(app, alt.flush());
 
   // First parameter references the ejs filename
@@ -95,7 +95,7 @@ let gracefulShutdown = function() {
   setTimeout(function() {
     console.error("Could not close connections in time, forcefully shutting down");
     process.exit()
-  }, 10*1000);
+  }, 1000);
 }
 // listen for TERM signal .e.g. kill 
 process.on('SIGTERM', gracefulShutdown);
