@@ -4,7 +4,7 @@ import compress from 'compression';
 import colors from 'colors';
 
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
+import Router from 'react-router';
 import DocMeta from 'react-doc-meta';
 
 import Iso from 'iso';
@@ -16,7 +16,7 @@ import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import webpackConfig from './webpack.config.js';
 
-import Application from './src/app/components/Application/Application.jsx';
+import routes from './src/app/routes/routes.js';
 import apiRoutes from './src/server/ApiRoutes/ApiRoutes.js';
 
 const ROOT_PATH = __dirname;
@@ -50,26 +50,27 @@ app.use('*/src/client', express.static(INDEX_PATH));
 
 app.use('/', apiRoutes);
 
-app.get('/', (req, res) => {
-  let app, iso;
+app.use('/', (req, res) => {
+  let iso;
 
   alt.bootstrap(JSON.stringify(res.locals.data || {}));
 
   iso = new Iso();
 
-  app = ReactDOMServer.renderToString(React.createElement(Application));
-  iso.add(app, alt.flush());
+  Router.run(routes.server, req.path, function (Root, state) {
+    const app = React.renderToString(<Root route={req.path} />);
+    iso.add(app, alt.flush());
 
-  // First parameter references the ejs filename
-  res.render('index', {
-    app: iso.render(),
-    appTitle: appConfig.appTitle,
-    favicon: appConfig.favIconPath,
-    isProduction: isProduction,
-    gaCode: analytics.google.code(isProduction),
-    webpackPort: WEBPACK_DEV_PORT,
-    appEnv: process.env.APP_ENV,
-    apiUrl: res.locals.data.completeApiUrl
+    // First parameter references the ejs filename
+    res.render('index', {
+      app: iso.render(),
+      appTitle: appConfig.appTitle,
+      favicon: appConfig.favIconPath,
+      isProduction: isProduction,
+      gaCode: analytics.google.code(isProduction),
+      webpackPort: WEBPACK_DEV_PORT,
+      appEnv: process.env.APP_ENV,
+    });
   });
 
 });

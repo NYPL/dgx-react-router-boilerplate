@@ -1,14 +1,16 @@
 import React from 'react';
+import Router from 'react-router';
 
 import Store from '../../stores/Store.js';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
+const RouteHandler = Router.RouteHandler;
+const Navigation = Router.Navigation;
+const App = React.createClass({
+  getInitialState() {
+    return Store.getState();
+  },
 
-    this.state = Store.getState();
-    this._getList = this._getList.bind(this);
-  }
+  mixins: [Navigation],
   
   render() {
     let angularApps = this._getList(this.state._angularApps),
@@ -17,24 +19,20 @@ class App extends React.Component {
     return (
       <div className='app-wrapper'>
         <h2>NYPL Rocks!</h2>
-        <p>Our Angular Apps</p>
-        <ul>
-          {angularApps}
-        </ul>
-        <p>Our React Apps</p>
-        <ul>
-          {reactApps}
-        </ul>
+        <p><a onClick={this.transitionTo.bind(this, 'angularApps')}>Angular Apps</a></p>
+        <p><a onClick={this.transitionTo.bind(this, 'reactApps')}>React Apps</a></p>
+
+        <RouteHandler {...this.props} />
       </div>
     );
-  }
+  },
 
   // Helper functions below the render() function:
   _getList(appsArray) {
     return appsArray.map((appName, index) => {
       return (<li key={index}>{appName}</li>);
     });
-  }
-}
+  },
+});
 
 export default App;

@@ -18,7 +18,7 @@ const apiRoot = refineryApi.root[appEnvironment];
 // const completeApiUrl = parser.getCompleteApi(options);
 
 router
-  .route('/')
+  .route('/*')
   .get((req, res, next) => {
     res.locals.data = {
       Store: {
