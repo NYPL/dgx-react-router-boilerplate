@@ -1,4 +1,4 @@
-let config = {
+export default {
   appTitle: 'NYPL | App Name',
   appName: 'NYPL App',
   favIconPath: 'http://ux-static.nypl.org.s3-website-us-east-1.amazonaws.com/images/favicon.ico',
@@ -12,5 +12,3 @@ let config = {
     }
   }
 };
-
-export default config;

@@ -1,10 +1,10 @@
 import path from 'path';
 import express from 'express';
-import favicon from 'express-favicon';
 import compress from 'compression';
 import colors from 'colors';
 
 import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 import DocMeta from 'react-doc-meta';
 
 import Iso from 'iso';
@@ -17,6 +17,7 @@ import WebpackDevServer from 'webpack-dev-server';
 import webpackConfig from './webpack.config.js';
 
 import Application from './src/app/components/Application/Application.jsx';
+import apiRoutes from './src/server/ApiRoutes/ApiRoutes.js';
 
 const ROOT_PATH = __dirname;
 const INDEX_PATH = path.resolve(ROOT_PATH, 'src/client');
@@ -26,7 +27,6 @@ const WEBPACK_DEV_PORT = appConfig.webpackDevServerPort || 3000;
 
 let isProduction = process.env.NODE_ENV === 'production',
   // Assign API Routes
-  apiRoutes = require('./src/server/ApiRoutes/ApiRoutes.js'),
   app = express();
 
 app.use(compress());
@@ -57,7 +57,7 @@ app.get('/', (req, res) => {
 
   iso = new Iso();
 
-  app = React.renderToString(React.createElement(Application));
+  app = ReactDOMServer.renderToString(React.createElement(Application));
   iso.add(app, alt.flush());
 
   // First parameter references the ejs filename
@@ -95,7 +95,7 @@ let gracefulShutdown = function() {
   setTimeout(function() {
     console.error("Could not close connections in time, forcefully shutting down");
     process.exit()
-  }, 10*1000);
+  }, 1000);
 }
 // listen for TERM signal .e.g. kill 
 process.on('SIGTERM', gracefulShutdown);
