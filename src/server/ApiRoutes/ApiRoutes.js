@@ -3,11 +3,12 @@ import axios from 'axios';
 // import parser from 'jsonapi-parserinator';
 
 // import Model from '../../app/utils/HeaderItemModel.js';
-import {refineryApi} from '../../../appConfig.js';
+import appConfig from '../../../appConfig.js';
 
-let router = express.Router(),
-  appEnvironment = process.env.APP_ENV || 'production',
-  apiRoot = refineryApi.root[appEnvironment];
+const { refineryApi } = appConfig;
+const router = express.Router();
+const appEnvironment = process.env.APP_ENV || 'production';
+const apiRoot = refineryApi.root[appEnvironment];
   // options = {
   //   endpoint: `${apiRoot}${refineryApi.endpoint}`,
   //   includes: refineryApi.includes,
@@ -22,9 +23,9 @@ router
     res.locals.data = {
       Store: {
         _angularApps: ['Locations', 'Divisions', 'Profiles'],
-        _reactApps: ['Staff Picks', 'Header', 'Book Lists']
+        _reactApps: ['Staff Picks', 'Header', 'Book Lists'],
       },
-      completeApiUrl: ''
+      completeApiUrl: '',
     };
 
     // The next is needed so that Express knows to go to the

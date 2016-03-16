@@ -5,7 +5,7 @@ class Store {
   constructor() {
     this.bindListeners({
       updateAngularApps: BookActions.UPDATE_ANGULAR_APPS,
-      updateReactApps: BookActions.UPDATE_REACT_APPS
+      updateReactApps: BookActions.UPDATE_REACT_APPS,
     });
 
     this.on('init', () => {
