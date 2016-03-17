@@ -19,8 +19,10 @@ const App = React.createClass({
     return (
       <div className='app-wrapper'>
         <h2>NYPL Rocks!</h2>
-        <p><a onClick={this.transitionTo.bind(this, 'angularApps')}>Angular Apps</a></p>
-        <p><a onClick={this.transitionTo.bind(this, 'reactApps')}>React Apps</a></p>
+        <ul>
+          <li><a onClick={this.transitionTo.bind(this, 'angularApps')}>Angular Apps</a></li>
+          <li><a onClick={this.transitionTo.bind(this, 'reactApps')}>React Apps</a></li>
+        </ul>
 
         <RouteHandler {...this.props} />
       </div>

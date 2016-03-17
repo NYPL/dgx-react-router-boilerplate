@@ -8,7 +8,7 @@ export default {
     root: {
       development: 'https://dev-refinery.nypl.org',
       qa: 'https://qa-refinery.nypl.org',
-      production: 'https://refinery.nypl.org'
-    }
-  }
+      production: 'https://refinery.nypl.org',
+    },
+  },
 };
