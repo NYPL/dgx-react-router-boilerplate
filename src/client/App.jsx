@@ -17,14 +17,10 @@ window.onload = () => {
 
     let history = createBrowserHistory();
 
-    // Router.run(routes.client, history, (Root, state) => {
-    //   ReactDOM.render(<Root />, container);
-    // });
-
     ReactDOM.render(
       <Router history={history}>{routes.client}</Router>,
       container
-      );
+    );
   });
 };
 
