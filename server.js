@@ -4,7 +4,9 @@ import compress from 'compression';
 import colors from 'colors';
 
 import React from 'react';
-import Router from 'react-router';
+import ReactDOMServer from 'react-dom/server';
+import { createMemoryHistory } from 'history';
+import { Router } from 'react-router';
 import DocMeta from 'react-doc-meta';
 
 import Iso from 'iso';
@@ -51,26 +53,27 @@ app.use('/', apiRoutes);
 
 app.use('/', (req, res) => {
   let iso;
+  const history = createMemoryHistory();
 
   alt.bootstrap(JSON.stringify(res.locals.data || {}));
 
   iso = new Iso();
 
-  Router.run(routes.server, req.path, (Root, state) => {
-    const html = React.renderToString(<Root route={req.path} />);
-    iso.add(html, alt.flush());
+  // Router.run(routes.server, req.path, (Root, state) => {
+  const html = ReactDOMServer.renderToString(<Router history={history}>{routes.server}</Router>);
+  iso.add(html, alt.flush());
 
-    // First parameter references the ejs filename
-    res.render('index', {
-      app: iso.render(),
-      appTitle: appConfig.appTitle,
-      favicon: appConfig.favIconPath,
-      gaCode: analytics.google.code(isProduction),
-      webpackPort: WEBPACK_DEV_PORT,
-      appEnv: process.env.APP_ENV,
-      isProduction,
-    });
+  // First parameter references the ejs filename
+  res.render('index', {
+    app: iso.render(),
+    appTitle: appConfig.appTitle,
+    favicon: appConfig.favIconPath,
+    gaCode: analytics.google.code(isProduction),
+    webpackPort: WEBPACK_DEV_PORT,
+    appEnv: process.env.APP_ENV,
+    isProduction,
   });
+  // });
 });
 
 const server = app.listen(app.get('port'), (error, result) => {

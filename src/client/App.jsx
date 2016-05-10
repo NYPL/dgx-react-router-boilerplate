@@ -1,21 +1,30 @@
 import React from 'react';
-import Router from 'react-router';
+import ReactDOM from 'react-dom';
+import { Router } from 'react-router';
+import createBrowserHistory from 'history/lib/createBrowserHistory'
 
 import alt from '../app/alt.js';
 import Iso from 'iso';
 
-import './styles/main.scss';
-
 import routes from '../app/routes/routes.js';
+
+import './styles/main.scss';
 
 window.onload = () => {
   // Render Isomorphically
   Iso.bootstrap((state, container) => {
     alt.bootstrap(state);
 
-    Router.run(routes.client, Router.HistoryLocation, (Root, state) => {
-      React.render(<Root />, container);
-    });
+    let history = createBrowserHistory();
+
+    // Router.run(routes.client, history, (Root, state) => {
+    //   ReactDOM.render(<Root />, container);
+    // });
+
+    ReactDOM.render(
+      <Router history={history}>{routes.client}</Router>,
+      container
+      );
   });
 };
 
