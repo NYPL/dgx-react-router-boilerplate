@@ -10,14 +10,14 @@ import AngularApps from '../components/Lists/AngularApps.jsx';
 const routes = {
   client: (
     <Route path="/" component={Application}>
-      <Route path="angular" component={AngularApps} ignoreScrollBehavior />
-      <Route path="react" component={ReactApps} ignoreScrollBehavior />
+      <Route path="angular" component={AngularApps} />
+      <Route path="react" component={ReactApps} />
     </Route>
   ),
   server: (
     <Route path="/" component={Application}>
-      <Route path="angular" component={AngularApps} ignoreScrollBehavior />
-      <Route path="react" component={ReactApps} ignoreScrollBehavior />
+      <Route path="angular" component={AngularApps} />
+      <Route path="react" component={ReactApps} />
     </Route>
   ),
 };
