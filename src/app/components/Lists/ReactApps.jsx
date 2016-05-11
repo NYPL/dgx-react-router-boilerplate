@@ -11,7 +11,7 @@ class ReactApps extends React.Component {
   }
   
   render() {
-    const reactApps = this._getList(this.state._reactApps);
+    const reactApps = this._getList(this.state.get('_reactApps'));
 
     return (
       <div className='app-wrapper'>

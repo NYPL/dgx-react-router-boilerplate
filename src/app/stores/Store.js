@@ -1,5 +1,7 @@
 import BookActions from '../actions/Actions.js';
 import alt from '../alt.js';
+import immutable from 'alt-utils/lib/ImmutableUtil';
+import Immutable from 'immutable';
 
 class Store {
   constructor() {
@@ -8,19 +10,27 @@ class Store {
       updateReactApps: BookActions.UPDATE_REACT_APPS,
     });
 
-    this.on('init', () => {
-      this._angularApps = [];
-      this._reactApps = [];
-    });
+    this.state = Immutable.Map({
+      _angularApps: Immutable.List([]),
+      _reactApps: Immutable.List([]),
+    })
   }
 
   updateAngularApps(data) {
-    this._angularApps = data;
+    const id = String(Math.random());
+    this.setState(this.state.setIn(['_angularApps', id], data));
   }
 
   updateReactApps(data) {
-    this._reactApps = data;
+    const id = String(Math.random());
+    this.setState(this.state.setIn(['_reactApps', id], data));
+  }
+
+  getImmutState() {
+    return Immutable.fromJS(this.getState());
   }
 }
 
-export default alt.createStore(Store, 'Store');
+Store.displayName = 'Store';
+
+export default alt.createStore(immutable(Store));

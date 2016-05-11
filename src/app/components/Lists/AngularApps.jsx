@@ -11,7 +11,7 @@ class AngularApps extends React.Component {
   }
   
   render() {
-    const angularApps = this._getList(this.state._angularApps);
+    const angularApps = this._getList(this.state.get('_angularApps'));
 
     return (
       <div className='app-wrapper'>
