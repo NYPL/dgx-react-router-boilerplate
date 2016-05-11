@@ -24,8 +24,8 @@ router
   .get((req, res, next) => {
     res.locals.data = {
       Store: Immutable.Map({
-        _angularApps: Immutable.List(['Locations', 'Divisions', 'Profiles']),
-        _reactApps: Immutable.List(['Staff Picks', 'Header', 'Book Lists']),
+        angularApps: Immutable.List(['Locations', 'Divisions', 'Profiles']),
+        reactApps: Immutable.List(['Staff Picks', 'Header', 'Book Lists']),
       }),
       completeApiUrl: '',
     };
