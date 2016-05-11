@@ -5,8 +5,7 @@ import colors from 'colors';
 
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { createMemoryHistory } from 'history';
-import { Router, match, RoutingContext } from 'react-router';
+import { Router, match, RouterContext } from 'react-router';
 import DocMeta from 'react-doc-meta';
 
 import Iso from 'iso';
@@ -53,7 +52,6 @@ app.use('/', apiRoutes);
 
 app.use('/', (req, res) => {
   let iso;
-  const history = createMemoryHistory();
 
   alt.bootstrap(JSON.stringify(res.locals.data || {}));
 
@@ -67,7 +65,7 @@ app.use('/', (req, res) => {
     } else if (redirectLocation) {
       res.redirect(302, redirectLocation.pathname + redirectLocation.search)
     } else if (renderProps) {
-      const html = ReactDOMServer.renderToString(<RoutingContext {...renderProps} />);
+      const html = ReactDOMServer.renderToString(<RouterContext {...renderProps} />);
       iso.add(html, alt.flush());
       res
         .status(200)
