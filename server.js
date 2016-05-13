@@ -4,7 +4,8 @@ import compress from 'compression';
 import colors from 'colors';
 
 import React from 'react';
-import Router from 'react-router';
+import ReactDOMServer from 'react-dom/server';
+import { Router, match, RouterContext } from 'react-router';
 import DocMeta from 'react-doc-meta';
 
 import Iso from 'iso';
@@ -16,7 +17,7 @@ import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import webpackConfig from './webpack.config.js';
 
-import routes from './src/app/routes/routes.js';
+import appRoutes from './src/app/routes/routes.js';
 import apiRoutes from './src/server/ApiRoutes/ApiRoutes.js';
 
 const ROOT_PATH = __dirname;
@@ -56,21 +57,31 @@ app.use('/', (req, res) => {
 
   iso = new Iso();
 
-  Router.run(routes.server, req.path, (Root, state) => {
-    const html = React.renderToString(<Root route={req.path} />);
-    iso.add(html, alt.flush());
+  const routes = appRoutes.server;
 
-    // First parameter references the ejs filename
-    res.render('index', {
-      app: iso.render(),
-      appTitle: appConfig.appTitle,
-      favicon: appConfig.favIconPath,
-      gaCode: analytics.google.code(isProduction),
-      webpackPort: WEBPACK_DEV_PORT,
-      appEnv: process.env.APP_ENV,
-      isProduction,
-    });
-  });
+  match({ routes, location: req.url }, (error, redirectLocation, renderProps) => {
+    if (error) {
+      res.status(500).send(error.message)
+    } else if (redirectLocation) {
+      res.redirect(302, redirectLocation.pathname + redirectLocation.search)
+    } else if (renderProps) {
+      const html = ReactDOMServer.renderToString(<RouterContext {...renderProps} />);
+      iso.add(html, alt.flush());
+      res
+        .status(200)
+        .render('index', {
+          app: iso.render(),
+          appTitle: appConfig.appTitle,
+          favicon: appConfig.favIconPath,
+          gaCode: analytics.google.code(isProduction),
+          webpackPort: WEBPACK_DEV_PORT,
+          appEnv: process.env.APP_ENV,
+          isProduction,
+        });
+    } else {
+      res.status(404).send('Not found')
+    }
+  })
 });
 
 const server = app.listen(app.get('port'), (error, result) => {
