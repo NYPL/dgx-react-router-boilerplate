@@ -1,5 +1,7 @@
 import express from 'express';
 import axios from 'axios';
+
+import Immutable from 'immutable';
 // import parser from 'jsonapi-parserinator';
 
 // import Model from '../../app/utils/HeaderItemModel.js';
@@ -21,10 +23,10 @@ router
   .route('/*')
   .get((req, res, next) => {
     res.locals.data = {
-      Store: {
-        _angularApps: ['Locations', 'Divisions', 'Profiles'],
-        _reactApps: ['Staff Picks', 'Header', 'Book Lists'],
-      },
+      Store: Immutable.Map({
+        angularApps: Immutable.List(['Locations', 'Divisions', 'Profiles']),
+        reactApps: Immutable.List(['Staff Picks', 'Header', 'Book Lists']),
+      }),
       completeApiUrl: '',
     };
 
