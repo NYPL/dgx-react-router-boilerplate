@@ -1,40 +1,25 @@
 import React from 'react';
-
-import Store from '../../stores/Store.js';
+import { Link } from 'react-router';
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = Store.getState();
-    this._getList = this._getList.bind(this);
-  }
-  
   render() {
-    let angularApps = this._getList(this.state._angularApps),
-      reactApps = this._getList(this.state._reactApps);
-
     return (
-      <div className='app-wrapper'>
-        <h2>NYPL Rocks!</h2>
-        <p>Our Angular Apps</p>
+      <div className="app-wrapper">
+        <h2><Link to="/">NYPL Rocks!</Link></h2>
         <ul>
-          {angularApps}
+          <li><Link to={'/angular'}>Angular Apps</Link></li>
+          <li><Link to={'/react'}>React Apps</Link></li>
         </ul>
-        <p>Our React Apps</p>
-        <ul>
-          {reactApps}
-        </ul>
+
+        {this.props.children}
+
       </div>
     );
   }
-
-  // Helper functions below the render() function:
-  _getList(appsArray) {
-    return appsArray.map((appName, index) => {
-      return (<li key={index}>{appName}</li>);
-    });
-  }
 }
+
+App.propTypes = {
+  children: React.PropTypes.object,
+};
 
 export default App;

@@ -1,13 +1,16 @@
 import express from 'express';
 import axios from 'axios';
+
+import Immutable from 'immutable';
 // import parser from 'jsonapi-parserinator';
 
 // import Model from '../../app/utils/HeaderItemModel.js';
-import {refineryApi} from '../../../appConfig.js';
+import appConfig from '../../../appConfig.js';
 
-let router = express.Router(),
-  appEnvironment = process.env.APP_ENV || 'production',
-  apiRoot = refineryApi.root[appEnvironment];
+const { refineryApi } = appConfig;
+const router = express.Router();
+const appEnvironment = process.env.APP_ENV || 'production';
+const apiRoot = refineryApi.root[appEnvironment];
   // options = {
   //   endpoint: `${apiRoot}${refineryApi.endpoint}`,
   //   includes: refineryApi.includes,
@@ -17,14 +20,14 @@ let router = express.Router(),
 // const completeApiUrl = parser.getCompleteApi(options);
 
 router
-  .route('/')
+  .route('/*')
   .get((req, res, next) => {
     res.locals.data = {
-      Store: {
-        _angularApps: ['Locations', 'Divisions', 'Profiles'],
-        _reactApps: ['Staff Picks', 'Header', 'Book Lists']
-      },
-      completeApiUrl: ''
+      Store: Immutable.Map({
+        angularApps: Immutable.List(['Locations', 'Divisions', 'Profiles']),
+        reactApps: Immutable.List(['Staff Picks', 'Header', 'Book Lists']),
+      }),
+      completeApiUrl: '',
     };
 
     // The next is needed so that Express knows to go to the

@@ -1,10 +1,11 @@
 import path from 'path';
 import express from 'express';
-import favicon from 'express-favicon';
 import compress from 'compression';
 import colors from 'colors';
 
 import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import { Router, match, RouterContext } from 'react-router';
 import DocMeta from 'react-doc-meta';
 
 import Iso from 'iso';
@@ -16,7 +17,8 @@ import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import webpackConfig from './webpack.config.js';
 
-import Application from './src/app/components/Application/Application.jsx';
+import appRoutes from './src/app/routes/routes.js';
+import apiRoutes from './src/server/ApiRoutes/ApiRoutes.js';
 
 const ROOT_PATH = __dirname;
 const INDEX_PATH = path.resolve(ROOT_PATH, 'src/client');
@@ -24,10 +26,8 @@ const DIST_PATH = path.resolve(ROOT_PATH, 'dist');
 const VIEWS_PATH = path.resolve(ROOT_PATH, 'src/views');
 const WEBPACK_DEV_PORT = appConfig.webpackDevServerPort || 3000;
 
-let isProduction = process.env.NODE_ENV === 'production',
-  // Assign API Routes
-  apiRoutes = require('./src/server/ApiRoutes/ApiRoutes.js'),
-  app = express();
+const isProduction = process.env.NODE_ENV === 'production';
+const app = express();
 
 app.use(compress());
 
@@ -50,54 +50,67 @@ app.use('*/src/client', express.static(INDEX_PATH));
 
 app.use('/', apiRoutes);
 
-app.get('/', (req, res) => {
-  let app, iso;
+app.use('/', (req, res) => {
+  let iso;
 
   alt.bootstrap(JSON.stringify(res.locals.data || {}));
 
   iso = new Iso();
 
-  app = React.renderToString(React.createElement(Application));
-  iso.add(app, alt.flush());
+  const routes = appRoutes.server;
 
-  // First parameter references the ejs filename
-  res.render('index', {
-    app: iso.render(),
-    appTitle: appConfig.appTitle,
-    favicon: appConfig.favIconPath,
-    isProduction: isProduction,
-    gaCode: analytics.google.code(isProduction),
-    webpackPort: WEBPACK_DEV_PORT,
-    appEnv: process.env.APP_ENV,
-    apiUrl: res.locals.data.completeApiUrl
-  });
-
+  match({ routes, location: req.url }, (error, redirectLocation, renderProps) => {
+    if (error) {
+      res.status(500).send(error.message)
+    } else if (redirectLocation) {
+      res.redirect(302, redirectLocation.pathname + redirectLocation.search)
+    } else if (renderProps) {
+      const html = ReactDOMServer.renderToString(<RouterContext {...renderProps} />);
+      iso.add(html, alt.flush());
+      res
+        .status(200)
+        .render('index', {
+          app: iso.render(),
+          appTitle: appConfig.appTitle,
+          favicon: appConfig.favIconPath,
+          gaCode: analytics.google.code(isProduction),
+          webpackPort: WEBPACK_DEV_PORT,
+          appEnv: process.env.APP_ENV,
+          isProduction,
+        });
+    } else {
+      res.status(404).send('Not found')
+    }
+  })
 });
 
-let server = app.listen(app.get('port'), (error, result) => {
+const server = app.listen(app.get('port'), (error, result) => {
   if (error) {
     console.log(colors.red(error));
   }
 
   console.log(colors.yellow.underline(appConfig.appName));
-  console.log(colors.green('Express server is listening at'), colors.cyan('localhost:' + app.get('port')));
+  console.log(
+    colors.green('Express server is listening at'),
+    colors.cyan('localhost:' + app.get('port'))
+  );
 });
 
 // This function is called when you want the server to die gracefully
 // i.e. wait for existing connections
-let gracefulShutdown = function() {
-  console.log("Received kill signal, shutting down gracefully.");
-  server.close(function() {
-    console.log("Closed out remaining connections.");
+const gracefulShutdown = () => {
+  console.log('Received kill signal, shutting down gracefully.');
+  server.close(() => {
+    console.log('Closed out remaining connections.');
     process.exit(0);
-  }); 
-  // if after 
-  setTimeout(function() {
-    console.error("Could not close connections in time, forcefully shutting down");
-    process.exit()
-  }, 10*1000);
-}
-// listen for TERM signal .e.g. kill 
+  });
+  // if after
+  setTimeout(() => {
+    console.error('Could not close connections in time, forcefully shutting down');
+    process.exit();
+  }, 1000);
+};
+// listen for TERM signal .e.g. kill
 process.on('SIGTERM', gracefulShutdown);
 // listen for INT signal e.g. Ctrl-C
 process.on('SIGINT', gracefulShutdown);
@@ -115,8 +128,8 @@ if (!isProduction) {
     historyApiFallback: true,
     headers: {
       'Access-Control-Allow-Origin': 'http://localhost:3001',
-      'Access-Control-Allow-Headers': 'X-Requested-With'
-    }
+      'Access-Control-Allow-Headers': 'X-Requested-With',
+    },
   }).listen(3000, 'localhost', (error, result) => {
     if (error) {
       console.log(colors.red(error));
