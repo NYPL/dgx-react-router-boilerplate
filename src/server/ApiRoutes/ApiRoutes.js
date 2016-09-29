@@ -1,10 +1,8 @@
 import express from 'express';
 import axios from 'axios';
 
-import Immutable from 'immutable';
 // import parser from 'jsonapi-parserinator';
 
-// import Model from '../../app/utils/HeaderItemModel.js';
 import appConfig from '../../../appConfig.js';
 
 const { refineryApi } = appConfig;
@@ -23,10 +21,25 @@ router
   .route('/*')
   .get((req, res, next) => {
     res.locals.data = {
-      Store: Immutable.Map({
-        angularApps: Immutable.List(['Locations', 'Divisions', 'Profiles']),
-        reactApps: Immutable.List(['Staff Picks', 'Header', 'Book Lists']),
-      }),
+      Store: {
+        angularApps: [
+          { id: 'Locations', link: 'https://nypl.org/locations' },
+          { id: 'Divisions', link: 'https://nypl.org/research-divisions' },
+          { id: 'Profiles', link: 'https://nypl.org/staff-profiles' },
+        ],
+        reactApps: [
+          { id: 'Staff Picks', link: 'https://nypl.org/staffpicks' },
+          {
+            id: 'Book Lists',
+            link: 'https://nypl.org/browse/recommendations/lists/nypl_mid_manhattan',
+          },
+          { id: 'Header', link: 'https://nypl.org' },
+          { id: 'Homepage', link: 'https://nypl.org' },
+          { id: 'New Arrivals', link: 'https://nypl.org/newarrivals' },
+          { id: 'Search Beta', link: 'https://nypl.org/searchbeta' },
+          { id: 'Blogs Beta', link: 'https://nypl.org/blog/beta' },
+        ],
+      },
       completeApiUrl: '',
     };
 
@@ -34,39 +47,6 @@ router
     // next middleware in the line.
     // This would be the app.get('/', ...) call in server.js.
     next();
-
-    /* This is commented out but we need to make an HTTP call to the
-     * Refinery, parse and model the returned data, and add it
-     * to the Alt store in the proper variables.
-     */
-    // axios
-    //   .get(completeApiUrl)
-    //   .then(data => {
-    //     // let parsed = parser.parse(data.data, options),
-    //     //   modelData = Model.build(parsed);
-
-    //     res.locals.data = {
-    //       Store: {
-    //         _storeVar: []
-    //       },
-    //       // Set the API URL here so we can access it when we
-    //       // render in the EJS file.
-    //       // completeApiUrl
-    //     };
-    //     next();
-    //   })
-    //   .catch(error => {
-    //     console.log('error calling API : ' + error);
-    //     console.log('Attempted to call : ' + completeApiUrl);
-
-    //     res.locals.data = {
-    //       Store: {
-    //         _storeVar: []
-    //       },
-    //       // completeApiUrl
-    //     };
-    //     next();
-    //   }); /* end Axios call */
   });
 
 export default router;
