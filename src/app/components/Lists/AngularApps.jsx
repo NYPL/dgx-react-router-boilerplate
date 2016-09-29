@@ -12,13 +12,13 @@ class AngularApps extends React.Component {
 
   // Helper functions below the render() function:
   getList(appsArray) {
-    return appsArray.map((appName, index) => {
-      return (<li key={index}>{appName}</li>);
-    });
+    return appsArray.map((app, index) => (
+      <li key={index}><a href={app.link}>{app.id}</a></li>
+    ));
   }
   
   render() {
-    const angularApps = this.getList(this.state.get('angularApps'));
+    const angularApps = this.getList(this.state.angularApps);
 
     return (
       <div className='app-wrapper'>
