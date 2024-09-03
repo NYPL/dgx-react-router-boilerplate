@@ -1,3 +1,6 @@
+Deprecated
+As of September 2024, this repo is deprecated. 
+
 # NYPL React Router Boilerplate
 
 Isomorphic React boilplate
